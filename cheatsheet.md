@@ -1,14 +1,25 @@
-# Ruby Cheatsheet:
-
-## General:
-- puts == println
-- print == print
+# Ruby Cheatsheet
 
 ## Variables:
 ```ruby
 my_int = 4
 my_string = "jesse"
 my_array = [1, 2, 3, 4, 5]
+```
+
+### Conditional assignment
+```ruby
+favorite_book = nil
+puts favorite_book
+# nil
+
+favorite_book ||= "Slaughterhouse 5"
+puts favorite_book
+# "Slaughterhouse 5"
+
+favorite_book ||= "Thinking Fast and Slow"
+puts favorite_book
+# "Slaughterhouse 5"
 ```
 
 ## Common methods:
@@ -21,7 +32,26 @@ print "string"
 
 # print with new line
 puts "string new line"
+
+age = 26
+# respond_to? returns true if the variable can do the action passed in
+age.respond_to?(:next) # true
+age.respond_to?(:hihihih) # false
 ```
+
+## Methods:
+```ruby
+def multiple_of_three(n)
+  return n % 3 == 0 ? "True" : "False"
+end
+```
+Equivalent to:
+```ruby
+def multiple_of_three(n)
+  n % 3 == 0 ? "True" : "False"
+end
+```
+Ruby always returns the evaluation of the last evaluated expression.
 
 ## Ifs:
 ```ruby
@@ -31,6 +61,48 @@ elsif user_num > 0
   puts "You picked a positive integer!"
 else
   puts "You picked zero!"
+end
+```
+
+### Inline
+```ruby
+x = 50
+x = 10 if x > 5
+# x = 10
+```
+```ruby
+x = 50
+x = 10 unless x > 500
+# x = 10
+```
+
+### Ternary
+```ruby
+my_string = 1 > 2 ? "impossible" : "always is"
+# my_string == "always is"
+```
+
+### Case statement
+```ruby
+case language
+when "JS"
+  puts "Websites!"
+when "Python"
+  puts "Science!"
+when "Ruby"
+  puts "Web apps!"
+else
+  puts "I don't know!"
+end
+```
+
+```ruby
+case greeting
+    when "hi" then puts "Nice"
+    when "sup" then puts "Dawg"
+    when "lol" then puts "lol"
+    when "ayyy" then puts "lmao"
+    else puts "idk"
 end
 ```
 
@@ -73,6 +145,18 @@ loop do
   break if i <= 0
 end
 ```
+
+### upto
+```ruby
+95.upto(100) { |num| print num, " " }
+# 95 96 97 98 99 100
+```
+
+### downto
+```ruby
+100.downto(100) { |num| print num, " " }
+```
+
 ### array.each
 ```ruby
 array = [1,2,3,4,5]
@@ -116,6 +200,17 @@ languages = ["HTML", "CSS", "JavaScript", "Python", "Ruby"]
 languages.each { |lang|
   puts lang
 }
+```
+
+### Push
+```ruby
+alphabet = "a", "b", "c"
+alphabet.push("d")
+# { "a", "b", "c", "d"}
+```
+```ruby
+alphabet = ["a", "b", "c"] << "d"
+# {"a", "b", "c", "d"}
 ```
 
 ## Hashes
@@ -185,6 +280,14 @@ movie_ratings = {
 good_movies = movie_ratings.select {
     |movie, rating| rating > 3
 }
+```
+
+### Add/Update/Delete
+```ruby
+my_hash = Hash.new
+my_hash["new"] = "value"
+my_hash["new"] = "value2"
+my_hash.delete("new")
 ```
 
 ## Methods
@@ -263,4 +366,98 @@ my_symbol = "hello".intern
 
 my_symbol = "hello".to_sym
 # my_symbol = :hello
+```
+
+
+## Blocks
+- Chunks of executable code
+- Are not objects
+
+```ruby
+5.times {
+  puts "This is a block"
+}
+```
+
+### Yields:
+```ruby
+def block_test
+  puts "We're in the method!"
+  puts "Yielding to the block..."
+  yield
+  puts "We're back in the method!"
+end
+
+block_test { puts ">>> We're in the block!" }
+
+# Output:
+# "We're in the method!"
+# "Yielding to the block..."
+#  >>> We're in the block!
+# "We're back in the method!"
+```
+
+### Yields w/ Parameter
+ ```ruby
+ def yield_name(name)
+  puts "In the method! Let's yield."
+  yield("Kim")
+  puts "In between the yields!"
+  yield(name)
+  puts "Block complete! Back in the method."
+end
+
+yield_name("Jesse") { |n| puts "My name is #{n}." }
+
+# Output:
+# In the method! Let's yield.
+# My name is Kim.
+# In between the yields!
+# My name is Jesse.
+# Block complete! Back in the method.
+```
+
+### Procs
+- Essentially a saved block
+- Is an object
+
+```ruby
+multiples_of_3 = Proc.new do |n|
+  n % 3 == 0
+end
+
+(1..100).to_a.select(&multiples_of_3)
+```
+
+```ruby
+#actual use case
+group_1 = [4.1, 5.5, 3.2, 3.3, 6.1, 3.9, 4.7]
+group_2 = [7.0, 3.8, 6.2, 6.1, 4.4, 4.9, 3.0]
+group_3 = [5.5, 5.1, 3.9, 4.3, 4.9, 3.2, 3.2]
+
+over_4_feet = Proc.new { |height| height >= 4 }
+
+can_ride_1 = group_1.select(&over_4_feet)
+can_ride_2 = group_2.select(&over_4_feet)
+can_ride_3 = group_3.select(&over_4_feet)
+
+# no need to re-write height >= 4 in three separate blocks
+```
+```ruby
+hi = Proc.new { puts "Hello!" }
+hi.call
+# Hello!
+```
+
+### Lambdas
+- Essentially a Proc w/ different syntax
+- 2 Main differences
+-- 1) Lambdas check the number of args passed, procs don't
+-- 2) When a lambda returns, it passes control back to the calling method; when a proc returns, it does so immediately, without going back to the calling method.
+```ruby
+strings = ["leonardo", "donatello", "raphael", "michaelangelo"]
+
+symbolize = lambda { |string| string.to_sym }
+
+symbols = strings.collect(&symbolize)
 ```
