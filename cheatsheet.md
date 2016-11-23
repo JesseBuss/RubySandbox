@@ -334,7 +334,7 @@ books = ["Charlie and the Chocolate Factory",
   "A Brief History of Time",
   "A Wrinkle in Time"]
 
-# ascending (eafult)
+# ascending (deafult)
 books.sort! { |firstBook, secondBook| firstBook <=> secondBook }
 
 # descending
@@ -460,4 +460,127 @@ strings = ["leonardo", "donatello", "raphael", "michaelangelo"]
 symbolize = lambda { |string| string.to_sym }
 
 symbols = strings.collect(&symbolize)
+```
+
+## Classes
+```ruby
+class Person
+  $life_expectancy = 90 # global variable
+  @@num_arms = 2 # class variable
+    def initialize(name)
+        # instances variables noted with @
+        @name = name
+    end
+end
+
+me = Person.new("Jesse")
+```
+
+### Inheritance
+```ruby
+class ApplicationError
+  def display_error
+    puts "Error! Error!"
+  end
+end
+
+class SuperBadError < ApplicationError
+end
+
+err = SuperBadError.new
+err.display_error
+# "Error! Error!"
+```
+
+### Methods
+```ruby
+class Dog
+    def initialize(name, breed)
+        @name = name
+        @breed = breed
+    end
+
+    # methods are public by default
+    public
+    def bark
+        puts "Woof!"
+    end
+
+    private
+    def id
+        @id_number = 12345
+    end
+end
+```
+
+```ruby
+class Person
+  def initialize(name, job)
+    @name = name
+    @job = job
+  end
+
+  #getter
+  def name
+    @name
+  end
+
+  #setter
+  def job=(new_job)
+    @job = new_job
+  end
+end
+```
+getters and setters can be replaced by attr_reader, attr_writer.  Use attr_accessor for both read and write.
+```ruby
+class Person
+  attr_reader :name
+  attr_writer :job
+
+  def initialize(name, job)
+    @name = name
+    @job = job
+  end
+end
+```
+
+### Modules
+- Just like classes, but cannot have instances or subclasses
+```ruby
+module Circle
+
+  PI = 3.141592653589793
+
+  def Circle.area(radius)
+    PI * radius**2
+  end
+
+  def Circle.circumference(radius)
+    2 * PI * radius
+  end
+end
+```
+
+### Require
+```ruby
+require 'date'
+
+puts Date.today
+```
+
+### Include
+```ruby
+class Angle
+include Math # can use Math's methods, like cos
+
+  attr_accessor :radians
+
+  def initialize(radians)
+    @radians = radians
+  end
+
+  def cosine
+    cos(@radians)
+  end
+end
 ```
